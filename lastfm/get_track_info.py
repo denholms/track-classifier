@@ -5,6 +5,7 @@ import re
 import json
 
 import pyechonest
+import pyechonest.song as echo_song
 from pyechonest import config
 
 # Config file format:
@@ -53,7 +54,7 @@ def main():
         print "-> (%d/%d) Processing %s - %s" % (i, n_tracks, track.get(ARTIST_KEY), track.get(TITLE_KEY))
 
         try:
-            results = pyechonest.song.search(artist=track.get(ARTIST_KEY), title=track.get(TITLE_KEY), buckets=['audio_summary'], results=1)
+            results = echo_song.search(artist=track.get(ARTIST_KEY), title=track.get(TITLE_KEY), buckets=['audio_summary'], results=1)
             if not results:
                 print "No results found for %s - %s" % (track.get(ARTIST_KEY), track.get(TITLE_KEY))
                 continue
