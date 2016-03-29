@@ -57,4 +57,4 @@ for i in range(0, k):
     validation_y = folded_target[k - 1 - i]
     score += classifier.score(validation_X, validation_y)
 
-print score/10
+print score/k
