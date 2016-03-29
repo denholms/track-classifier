@@ -57,12 +57,16 @@ with open('spotify_dataset.csv', newline='') as file:
                             data[0][5], data[0][6], data[0][7], data[0][8], data[0][9],
                             data[0][10], data[0][11], data[0][12], data[0][13], data[0][14], 1]
 
+            data_set.append(song_attr)
+
             for i in range(len(song_attr)):
                     if song_attr[i] == '':
-                        song_attr[i] = float(0)
+                        data_set.pop()
+                        break
+                        #song_attr[i] = float(0)
                     
             #if blank == 0:
-            data_set.append(song_attr)
+            #data_set.append(song_attr)
                                    
 # Split dislikes into training data and test data from the spotify_dislike_dataset.csv file
 with open('spotify_dislike_dataset.csv', newline='') as file:
@@ -74,12 +78,16 @@ with open('spotify_dislike_dataset.csv', newline='') as file:
                              data[0][5], data[0][6], data[0][7], data[0][8], data[0][9],
                              data[0][10], data[0][11], data[0][12], data[0][13], data[0][14], 0]
 
+            data_set.append(song_attr)
+
             for i in range(len(song_attr)):
                     if song_attr[i] == '':
-                        song_attr[i] = float(0)
+                        data_set.pop()
+                        break
+                        #song_attr[i] = float(0)
                     
             #if blank == 0:
-            data_set.append(song_attr)
+            #data_set.append(song_attr)
 
 random.shuffle(data_set)
 
