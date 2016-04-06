@@ -92,6 +92,29 @@ def calc_accuracy(classifications, predictions):
 
     return float(correct) / len(classifications)
 
+def calc_precision(classifications, predictions, cls):
+    true_pos = 1
+    false_pos = 1
+    for i in range(len(classifications)):
+        if predictions[i] == cls and classifications[i] == cls:
+            true_pos += 1
+
+        if predictions[i] == cls and classifications[i] != cls:
+            false_pos += 1
+
+    return float(true_pos) / float(true_pos + false_pos)
+
+def calc_recall(classifications, predictions, cls):
+    true_pos = 1
+    false_neg = 1
+    for i in range(len(classifications)):
+        if predictions[i] != cls and classifications[i] == cls:
+            false_neg += 1
+
+        if predictions[i] == cls and predictions[i] == classifications[i]:
+            true_pos += 1
+
+    return float(true_pos) / float(true_pos + false_neg)
 
 def main():
     likes_raw = load_file('spotify_dataset.csv')
@@ -109,27 +132,60 @@ def main():
 
     data, classifications = shuffle(data, classifications)
 
-
     k = 10
     fold_size = int(len(data) * 1/float(k))
 
     print "N = %d" %(len(data))
     print "Using %d folds, with fold size of %d" %(k, fold_size)
 
-    sum = 0
+    sum_accuracy = 0
+    sum_like_precision = 0
+    sum_like_recall = 0
+    sum_dislike_precision = 0
+    sum_dislike_recall = 0
     for i in range(k):
         test_data, test_classifications, train_data, train_classifications = k_fold(k, data, classifications, i)
 
-        clf = Perceptron()
+        clf = Perceptron(penalty='l2')
         clf = clf.fit(train_data, train_classifications)
 
         predictions = clf.predict(test_data)
 
         accuracy = calc_accuracy(test_classifications, predictions)
-        sum += accuracy
+        sum_accuracy += accuracy
 
-    avg_accuracy = sum / k
+        like_precision = calc_precision(test_classifications, predictions, 1)
+        sum_like_precision += like_precision
+
+        like_recall = calc_recall(test_classifications, predictions, 1)
+        sum_like_recall += like_recall
+
+        dislike_precision = calc_precision(test_classifications, predictions, 0)
+        sum_dislike_precision += dislike_precision
+
+        dislike_recall = calc_recall(test_classifications, predictions, 0)
+        sum_dislike_recall += dislike_recall
+
+    avg_accuracy = sum_accuracy / k
     print "Avg. accuracy = %s" %avg_accuracy
+
+    avg_like_precision = sum_like_precision / k
+    print "Avg. like precision = %s" %avg_like_precision
+
+    avg_like_recall = sum_like_recall / k
+    print "Avg. like recall = %s" %avg_like_recall
+
+    avg_dislike_precision = sum_dislike_precision / k
+    print "Avg. dislike precision = %s" %avg_dislike_precision
+
+    avg_dislike_recall = sum_dislike_recall / k
+    print "Avg. dislike recall = %s" %avg_dislike_recall
+
+    avg_precision = (avg_like_precision + avg_dislike_precision) / 2
+    print "Avg. precision = %s" %avg_precision
+
+    avg_recall = (avg_like_recall + avg_dislike_recall) / 2
+    print "Avg. recall = %s" %avg_recall
 
 if __name__ == "__main__":
     main()
